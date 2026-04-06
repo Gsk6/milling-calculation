@@ -1,0 +1,107 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{padding:1rem 0;font-family:var(--font-sans)}
+.title{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:1rem}
+.sheet{width:100%;border-collapse:collapse;font-size:14px}
+.sheet th,.sheet td{border:1px solid var(--color-border-secondary);padding:7px 10px;text-align:left;color:var(--color-text-primary)}
+.sheet th{background:var(--color-background-secondary);font-weight:500;font-size:13px;color:var(--color-text-secondary)}
+.sheet input[type=number]{width:100%;border:none;background:transparent;font-size:14px;color:var(--color-text-primary);padding:0;outline:none;text-align:right}
+.sheet input[type=number]:focus{background:var(--color-background-info);border-radius:4px;padding:2px 4px}
+.sheet .num{text-align:right}
+.sheet .total-row td{font-weight:500;background:#E6F1FB;color:#0C447C}
+.sheet .label-cell{color:var(--color-text-secondary);font-size:13px}
+.sheet .val-cell{text-align:right;font-weight:500}
+.add-btn{margin-top:10px;padding:7px 14px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer}
+.add-btn:hover{background:var(--color-background-secondary)}
+.del-btn{border:none;background:none;color:var(--color-text-tertiary);cursor:pointer;font-size:16px;padding:0 4px;line-height:1}
+.del-btn:hover{color:#E24B4A}
+.formula-hint{font-size:11px;color:var(--color-text-tertiary);margin-top:6px}
+</style>
+
+<div class="wrap">
+  <div class="title">Milling dimension cost calculator</div>
+  <table class="sheet" id="mainTable">
+    <thead>
+      <tr>
+        <th style="width:36px"></th>
+        <th>Length (mm)</th>
+        <th>Width (mm)</th>
+        <th style="width:220px">Calculation type</th>
+        <th style="width:100px;text-align:right">Value</th>
+      </tr>
+    </thead>
+    <tbody id="rowsBody"></tbody>
+    <tfoot id="summaryFoot"></tfoot>
+  </table>
+  <button class="add-btn" onclick="addRow()">+ Add row</button>
+  <div class="formula-hint">
+    Length width: ((2×(L+W))/1000)×200 &nbsp;|&nbsp; Thickness: ((2×L×W)/100)×0.3
+  </div>
+</div>
+
+<script>
+let rows = [{length:500, width:180}];
+
+function calcLW(l,w){ return ((2*(l+w))/1000)*200; }
+function calcThick(l,w){ return ((2*l*w)/100)*0.3; }
+
+function render(){
+  const tbody = document.getElementById('rowsBody');
+  const tfoot = document.getElementById('summaryFoot');
+
+  let totalAll = 0;
+
+  tbody.innerHTML = rows.map((r,i)=>{
+    const lw = (r.length && r.width) ? calcLW(r.length, r.width) : 0;
+    const th = (r.length && r.width) ? calcThick(r.length, r.width) : 0;
+    const sub = lw + th;
+    totalAll += sub;
+    return `
+    <tr>
+      <td><button class="del-btn" onclick="delRow(${i})">×</button></td>
+      <td><input type="number" value="${r.length}" min="0" step="1" oninput="setVal(${i},'length',this.value)"></td>
+      <td><input type="number" value="${r.width}" min="0" step="1" oninput="setVal(${i},'width',this.value)"></td>
+      <td class="label-cell">Length width calculation</td>
+      <td class="val-cell">${lw.toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td></td><td></td><td></td>
+      <td class="label-cell">Thickness calculation</td>
+      <td class="val-cell">${th.toFixed(2)}</td>
+    </tr>
+    ${rows.length>1 ? `<tr style="border-bottom:2px solid var(--color-border-secondary)">
+      <td></td><td></td><td></td>
+      <td class="label-cell" style="font-weight:500">Row ${i+1} total</td>
+      <td class="val-cell" style="font-weight:500">${sub.toFixed(2)}</td>
+    </tr>` : ''}
+    `;
+  }).join('');
+
+  tfoot.innerHTML = `
+    <tr class="total-row">
+      <td colspan="3"></td>
+      <td>Total</td>
+      <td class="num">${totalAll.toFixed(2)}</td>
+    </tr>
+  `;
+}
+
+function setVal(i, key, val){
+  rows[i][key] = parseFloat(val)||0;
+  render();
+}
+
+function addRow(){
+  rows.push({length:0, width:0});
+  render();
+}
+
+function delRow(i){
+  if(rows.length===1){ rows[0]={length:0,width:0}; render(); return; }
+  rows.splice(i,1);
+  render();
+}
+
+render();
+</script>
