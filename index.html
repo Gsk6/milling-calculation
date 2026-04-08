@@ -1,22 +1,25 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-.wrap{padding:1rem 0;font-family:var(--font-sans)}
-.title{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:1rem}
-.sheet{width:100%;border-collapse:collapse;font-size:14px}
-.sheet th,.sheet td{border:1px solid var(--color-border-secondary);padding:7px 10px;text-align:left;color:var(--color-text-primary)}
-.sheet th{background:var(--color-background-secondary);font-weight:500;font-size:13px;color:var(--color-text-secondary)}
-.sheet input[type=number]{width:100%;border:none;background:transparent;font-size:14px;color:var(--color-text-primary);padding:0;outline:none;text-align:right}
-.sheet input[type=number]:focus{background:var(--color-background-info);border-radius:4px;padding:2px 4px}
+.wrap{padding:1.5rem;font-family:var(--font-sans);max-width:860px;margin:0 auto;background:linear-gradient(180deg,#FCFDFE 0%,#F3F8FC 100%);border:1px solid #D8E4EF;border-radius:18px;box-shadow:0 18px 42px rgba(33,61,92,0.08)}
+.title{font-size:24px;font-weight:800;color:#15324A;letter-spacing:-0.02em;margin-bottom:1rem}
+.sheet{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;table-layout:fixed;background:#FFFFFF;border:1px solid #D8E4EF;border-radius:14px;overflow:hidden}
+.sheet th,.sheet td{border-bottom:1px solid #E3EBF3;padding:10px 12px;text-align:left;color:var(--color-text-primary);background:#FFFFFF}
+.sheet th{background:#EEF4F8;font-weight:700;font-size:13px;color:#496174;text-transform:uppercase;letter-spacing:0.03em}
+.sheet tbody tr:last-child td{border-bottom:none}
+.sheet input[type=text]{width:100%;border:1px solid #C9D8E6;background:#F9FBFD;font-size:14px;color:#15324A;padding:9px 10px;outline:none;text-align:right;border-radius:10px;transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease}
+.sheet input[type=text]:focus{background:#FFFFFF;border-color:#4C8DDA;box-shadow:0 0 0 3px rgba(76,141,218,0.15)}
 .sheet .num{text-align:right}
-.sheet .total-row td{font-weight:500;background:#E6F1FB;color:#0C447C}
-.sheet .label-cell{color:var(--color-text-secondary);font-size:13px}
-.sheet .val-cell{text-align:right;font-weight:500}
-.add-btn{margin-top:10px;padding:7px 14px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer}
-.add-btn:hover{background:var(--color-background-secondary)}
+.sheet .total-row td{font-weight:700;background:#E3F0FB;color:#0C447C;border-bottom:none}
+.sheet .label-cell{color:#587083;font-size:13px}
+.sheet .val-cell{text-align:right;font-weight:700;color:#15324A}
+.sheet .row-divider td{padding:0;border:none;height:14px;background:transparent}
+.sheet .row-divider td::before{content:"";display:block;border-top:2px solid #D8E4EF}
+.add-btn{margin-top:14px;padding:10px 16px;font-size:13px;font-weight:700;border:1px solid #C5D7E7;border-radius:10px;background:#FFFFFF;color:#15324A;cursor:pointer;box-shadow:0 8px 18px rgba(33,61,92,0.08);transition:transform .2s ease, box-shadow .2s ease, background-color .2s ease}
+.add-btn:hover{background:#F4F8FB;transform:translateY(-1px);box-shadow:0 12px 24px rgba(33,61,92,0.12)}
 .del-btn{border:none;background:none;color:var(--color-text-tertiary);cursor:pointer;font-size:16px;padding:0 4px;line-height:1}
 .del-btn:hover{color:#E24B4A}
-.formula-hint{font-size:11px;color:var(--color-text-tertiary);margin-top:6px}
+.formula-hint{font-size:12px;color:#6D8192;margin-top:10px}
 </style>
 
 <div class="wrap">
@@ -25,8 +28,8 @@
     <thead>
       <tr>
         <th style="width:36px"></th>
-        <th>Length (mm)</th>
-        <th>Width (mm)</th>
+        <th style="width:140px">Length (mm)</th>
+        <th style="width:140px">Width (mm)</th>
         <th style="width:220px">Calculation type</th>
         <th style="width:100px;text-align:right">Value</th>
       </tr>
@@ -41,10 +44,11 @@
 </div>
 
 <script>
-let rows = [{length:500, width:180}];
+let rows = [{length:'500', width:'180'}];
 
 function calcLW(l,w){ return ((2*(l+w))/1000)*200; }
 function calcThick(l,w){ return ((2*l*w)/100)*0.3; }
+function toNumber(val){ return val === '' ? 0 : Number(val); }
 
 function render(){
   const tbody = document.getElementById('rowsBody');
@@ -53,15 +57,18 @@ function render(){
   let totalAll = 0;
 
   tbody.innerHTML = rows.map((r,i)=>{
-    const lw = (r.length && r.width) ? calcLW(r.length, r.width) : 0;
-    const th = (r.length && r.width) ? calcThick(r.length, r.width) : 0;
+    const length = toNumber(r.length);
+    const width = toNumber(r.width);
+    const hasDimensions = r.length !== '' && r.width !== '';
+    const lw = hasDimensions ? calcLW(length, width) : 0;
+    const th = hasDimensions ? calcThick(length, width) : 0;
     const sub = lw + th;
     totalAll += sub;
     return `
     <tr>
       <td><button class="del-btn" onclick="delRow(${i})">×</button></td>
-      <td><input type="number" value="${r.length}" min="0" step="1" oninput="setVal(${i},'length',this.value)"></td>
-      <td><input type="number" value="${r.width}" min="0" step="1" oninput="setVal(${i},'width',this.value)"></td>
+      <td><input type="text" inputmode="numeric" value="${r.length}" onchange="setVal(${i},'length',this.value)" onblur="setVal(${i},'length',this.value)"></td>
+      <td><input type="text" inputmode="numeric" value="${r.width}" onchange="setVal(${i},'width',this.value)" onblur="setVal(${i},'width',this.value)"></td>
       <td class="label-cell">Length width calculation</td>
       <td class="val-cell">${lw.toFixed(2)}</td>
     </tr>
@@ -70,11 +77,12 @@ function render(){
       <td class="label-cell">Thickness calculation</td>
       <td class="val-cell">${th.toFixed(2)}</td>
     </tr>
-    ${rows.length>1 ? `<tr style="border-bottom:2px solid var(--color-border-secondary)">
+    <tr>
       <td></td><td></td><td></td>
       <td class="label-cell" style="font-weight:500">Row ${i+1} total</td>
       <td class="val-cell" style="font-weight:500">${sub.toFixed(2)}</td>
-    </tr>` : ''}
+    </tr>
+    ${i < rows.length - 1 ? `<tr class="row-divider"><td colspan="5"></td></tr>` : ''}
     `;
   }).join('');
 
@@ -88,17 +96,17 @@ function render(){
 }
 
 function setVal(i, key, val){
-  rows[i][key] = parseFloat(val)||0;
+  rows[i][key] = val;
   render();
 }
 
 function addRow(){
-  rows.push({length:0, width:0});
+  rows.push({length:'', width:''});
   render();
 }
 
 function delRow(i){
-  if(rows.length===1){ rows[0]={length:0,width:0}; render(); return; }
+  if(rows.length===1){ rows[0]={length:'',width:''}; render(); return; }
   rows.splice(i,1);
   render();
 }
