@@ -20,6 +20,33 @@
 .del-btn{border:none;background:none;color:var(--color-text-tertiary);cursor:pointer;font-size:16px;padding:0 4px;line-height:1}
 .del-btn:hover{color:#E24B4A}
 .formula-hint{font-size:12px;color:#6D8192;margin-top:10px}
+.job-details{margin-top:24px;background:#FFFFFF;border:1px solid #D8E4EF;border-radius:16px;padding:20px;box-shadow:0 14px 30px rgba(33,61,92,0.06)}
+.section-title{font-size:20px;font-weight:800;color:#15324A;margin-bottom:14px}
+.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.detail-card{background:#F7FAFD;border:1px solid #DCE7F0;border-radius:14px;padding:16px}
+.detail-card h3{font-size:15px;font-weight:800;color:#15324A;margin-bottom:10px}
+.detail-card p{font-size:14px;color:#587083;line-height:1.7}
+.detail-field{display:grid;grid-template-columns:1fr 120px;align-items:center;gap:10px;margin-bottom:10px}
+.detail-field:last-child{margin-bottom:0}
+.detail-field label{font-size:14px;color:#587083;font-weight:600}
+.job-input{width:100%;border:1px solid #C9D8E6;background:#FFFFFF;font-size:14px;color:#15324A;padding:9px 10px;outline:none;text-align:right;border-radius:10px;transition:border-color .2s ease, box-shadow .2s ease}
+.job-input:focus{border-color:#4C8DDA;box-shadow:0 0 0 3px rgba(76,141,218,0.15)}
+.heavy-note{margin-bottom:18px;padding:14px 16px;background:linear-gradient(135deg,#E7F2FF 0%,#F3F8FD 100%);border:1px solid #CFE0F1;border-radius:12px;font-size:14px;font-weight:700;color:#0C447C}
+.step-list{display:grid;gap:12px;margin-bottom:20px}
+.step-item{padding:14px 16px;border:1px solid #DCE7F0;border-radius:12px;background:#FBFDFF}
+.step-item h4{font-size:14px;font-weight:800;color:#15324A;margin-bottom:6px}
+.step-item p{font-size:13px;line-height:1.7;color:#587083}
+.step-item p strong{color:#15324A}
+.job-table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid #D8E4EF;border-radius:12px;background:#FFFFFF;margin-bottom:18px}
+.job-table th,.job-table td{padding:11px 12px;border-bottom:1px solid #E3EBF3;text-align:left;font-size:13px}
+.job-table th{background:#EEF4F8;color:#496174;font-weight:700}
+.job-table tr:last-child td{border-bottom:none}
+.cost-note{padding:14px 16px;background:#15324A;border-radius:12px;color:#FFFFFF;font-size:15px;font-weight:700}
+.cost-formula{margin-top:10px;font-size:13px;color:#587083}
+@media (max-width:700px){
+  .wrap{padding:1rem}
+  .detail-grid{grid-template-columns:1fr}
+}
 </style>
 
 <div class="wrap">
@@ -41,14 +68,229 @@
   <div class="formula-hint">
     Length width: ((2×(L+W))/1000)×200 &nbsp;|&nbsp; Thickness: ((2×L×W)/100)×0.3
   </div>
+  <section class="job-details">
+    <div class="section-title">Job Details</div>
+    <div class="detail-grid">
+      <div class="detail-card">
+        <h3>Raw size</h3>
+        <div class="detail-field">
+          <label for="rawLength">Length</label>
+          <input class="job-input" id="rawLength" type="text" inputmode="decimal" value="610" onchange="setJobVal('rawLength',this.value)" onblur="setJobVal('rawLength',this.value)">
+        </div>
+        <div class="detail-field">
+          <label for="rawWidth">Width</label>
+          <input class="job-input" id="rawWidth" type="text" inputmode="decimal" value="210" onchange="setJobVal('rawWidth',this.value)" onblur="setJobVal('rawWidth',this.value)">
+        </div>
+        <div class="detail-field">
+          <label for="rawThickness">Thickness</label>
+          <input class="job-input" id="rawThickness" type="text" inputmode="decimal" value="56" onchange="setJobVal('rawThickness',this.value)" onblur="setJobVal('rawThickness',this.value)">
+        </div>
+      </div>
+      <div class="detail-card">
+        <h3>Final size</h3>
+        <div class="detail-field">
+          <label for="finalLength">Length</label>
+          <input class="job-input" id="finalLength" type="text" inputmode="decimal" value="560" onchange="setJobVal('finalLength',this.value)" onblur="setJobVal('finalLength',this.value)">
+        </div>
+        <div class="detail-field">
+          <label for="finalWidth">Width</label>
+          <input class="job-input" id="finalWidth" type="text" inputmode="decimal" value="175" onchange="setJobVal('finalWidth',this.value)" onblur="setJobVal('finalWidth',this.value)">
+        </div>
+        <div class="detail-field">
+          <label for="finalThickness">Thickness</label>
+          <input class="job-input" id="finalThickness" type="text" inputmode="decimal" value="50" onchange="setJobVal('finalThickness',this.value)" onblur="setJobVal('finalThickness',this.value)">
+        </div>
+      </div>
+    </div>
+    <table class="job-table">
+      <thead>
+        <tr>
+          <th>Material Removal</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Length</td>
+          <td><span id="lengthRemovalText">610 -> 560 = 50 mm</span></td>
+        </tr>
+        <tr>
+          <td>Width</td>
+          <td><span id="widthRemovalText">210 -> 175 = 35 mm</span></td>
+        </tr>
+        <tr>
+          <td>Thickness</td>
+          <td><span id="thicknessRemovalText">56 -> 50 = 6 mm</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="heavy-note">Heavy milling job: all 6 faces</div>
+    <div class="section-title">Machining Strategy (FN3 - MS)</div>
+    <div class="step-list">
+      <div class="step-item">
+        <h4>1. Thickness (Face Milling)</h4>
+        <p><strong>Removal =</strong> <span id="stepThicknessRemoval">6</span> mm</p>
+        <p><strong>Depth/pass =</strong> 2 mm -> <span id="stepThicknessPasses">3</span> passes</p>
+        <p><strong>Area =</strong> <span id="stepArea">610 x 210</span></p>
+        <p>Time per pass = 12 min</p>
+        <p>Total = <span id="stepThicknessTime">36 min</span></p>
+      </div>
+      <div class="step-item">
+        <h4>2. Length Reduction (Side Milling)</h4>
+        <p><span id="stepLengthRemoval">50</span> mm removal -> both ends</p>
+        <p><strong>Depth/pass =</strong> 2 mm -> <span id="stepLengthPasses">25</span> passes combined</p>
+        <p>Total = <span id="stepLengthTime">300 min</span></p>
+      </div>
+      <div class="step-item">
+        <h4>3. Width Reduction</h4>
+        <p><span id="stepWidthRemoval">35</span> mm removal</p>
+        <p><strong>Depth/pass =</strong> 2 mm -> <span id="stepWidthPasses">18</span> passes</p>
+        <p>Total = <span id="stepWidthTime">216 min</span></p>
+      </div>
+      <div class="step-item">
+        <h4>4. Finishing Cuts</h4>
+        <p>Final finishing on all sides</p>
+        <p>Add 40-60 min</p>
+      </div>
+      <div class="step-item">
+        <h4>5. Setup + Handling</h4>
+        <p>Add 40-60 min</p>
+      </div>
+    </div>
+    <div class="section-title">Total Time</div>
+    <table class="job-table">
+      <thead>
+        <tr>
+          <th>Operation</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Facing</td>
+          <td id="facingTime">0.60 hr</td>
+        </tr>
+        <tr>
+          <td>Length milling</td>
+          <td id="lengthMillingTime">5.00 hr</td>
+        </tr>
+        <tr>
+          <td>Width milling</td>
+          <td id="widthMillingTime">3.60 hr</td>
+        </tr>
+        <tr>
+          <td>Finishing</td>
+          <td id="finishingTime">0.67 hr</td>
+        </tr>
+        <tr>
+          <td>Setup</td>
+          <td id="setupTime">0.67 hr</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="detail-card" style="margin-bottom:18px">
+      <h3>Total Estimate</h3>
+      <p id="totalEstimate">Total time = 10.54 hours</p>
+    </div>
+    <div class="section-title">Cost Calculation (India FN3 Rates)</div>
+    <table class="job-table" style="margin-bottom:0">
+      <thead>
+        <tr>
+          <th>Rate/hr</th>
+          <th>Total Time</th>
+          <th>Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Rs500</td>
+          <td id="costHours">10.54 hr</td>
+          <td id="costValue">Rs5270</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="cost-formula" id="costFormula">Cost = 10.54 hr x Rs500 = Rs5270</div>
+  </section>
 </div>
 
 <script>
 let rows = [{length:'500', width:'180'}];
+let job = {
+  rawLength:'610',
+  rawWidth:'210',
+  rawThickness:'56',
+  finalLength:'560',
+  finalWidth:'175',
+  finalThickness:'50'
+};
+const depthPerPass = 2;
+const timePerPassMinutes = 12;
+const finishingMinutes = 40;
+const setupMinutes = 40;
 
 function calcLW(l,w){ return ((2*(l+w))/1000)*200; }
 function calcThick(l,w){ return ((2*l*w)/100)*0.3; }
 function toNumber(val){ return val === '' ? 0 : Number(val); }
+function calcRemoval(raw, final){ return Math.max(0, raw - final); }
+function calcPasses(removal){ return removal > 0 ? Math.ceil(removal / depthPerPass) : 0; }
+function formatNum(val){
+  return Number.isInteger(val) ? String(val) : val.toFixed(2).replace(/\.?0+$/,'');
+}
+function formatMinutes(val){
+  return `${formatNum(val)} min`;
+}
+function formatHoursFromMinutes(val){
+  return `${(val / 60).toFixed(2)} hr`;
+}
+function formatCurrency(val){
+  return `Rs${Math.round(val)}`;
+}
+
+function renderJobDetails(){
+  const rawLength = toNumber(job.rawLength);
+  const rawWidth = toNumber(job.rawWidth);
+  const rawThickness = toNumber(job.rawThickness);
+  const finalLength = toNumber(job.finalLength);
+  const finalWidth = toNumber(job.finalWidth);
+  const finalThickness = toNumber(job.finalThickness);
+
+  const lengthRemoval = calcRemoval(rawLength, finalLength);
+  const widthRemoval = calcRemoval(rawWidth, finalWidth);
+  const thicknessRemoval = calcRemoval(rawThickness, finalThickness);
+  const thicknessPasses = calcPasses(thicknessRemoval);
+  const lengthPasses = calcPasses(lengthRemoval);
+  const widthPasses = calcPasses(widthRemoval);
+  const thicknessTime = thicknessPasses * timePerPassMinutes;
+  const lengthTime = lengthPasses * timePerPassMinutes;
+  const widthTime = widthPasses * timePerPassMinutes;
+  const totalMinutes = thicknessTime + lengthTime + widthTime + finishingMinutes + setupMinutes;
+  const totalHours = totalMinutes / 60;
+  const costValue = totalHours * 500;
+
+  document.getElementById('lengthRemovalText').textContent = `${formatNum(rawLength)} -> ${formatNum(finalLength)} = ${formatNum(lengthRemoval)} mm`;
+  document.getElementById('widthRemovalText').textContent = `${formatNum(rawWidth)} -> ${formatNum(finalWidth)} = ${formatNum(widthRemoval)} mm`;
+  document.getElementById('thicknessRemovalText').textContent = `${formatNum(rawThickness)} -> ${formatNum(finalThickness)} = ${formatNum(thicknessRemoval)} mm`;
+
+  document.getElementById('stepThicknessRemoval').textContent = formatNum(thicknessRemoval);
+  document.getElementById('stepThicknessPasses').textContent = formatNum(thicknessPasses);
+  document.getElementById('stepArea').textContent = `${formatNum(rawLength)} x ${formatNum(rawWidth)}`;
+  document.getElementById('stepLengthRemoval').textContent = formatNum(lengthRemoval);
+  document.getElementById('stepLengthPasses').textContent = formatNum(lengthPasses);
+  document.getElementById('stepWidthRemoval').textContent = formatNum(widthRemoval);
+  document.getElementById('stepWidthPasses').textContent = formatNum(widthPasses);
+  document.getElementById('stepThicknessTime').textContent = formatMinutes(thicknessTime);
+  document.getElementById('stepLengthTime').textContent = formatMinutes(lengthTime);
+  document.getElementById('stepWidthTime').textContent = formatMinutes(widthTime);
+  document.getElementById('facingTime').textContent = formatHoursFromMinutes(thicknessTime);
+  document.getElementById('lengthMillingTime').textContent = formatHoursFromMinutes(lengthTime);
+  document.getElementById('widthMillingTime').textContent = formatHoursFromMinutes(widthTime);
+  document.getElementById('finishingTime').textContent = formatHoursFromMinutes(finishingMinutes);
+  document.getElementById('setupTime').textContent = formatHoursFromMinutes(setupMinutes);
+  document.getElementById('totalEstimate').textContent = `Total time = ${formatHoursFromMinutes(totalMinutes)} (${formatMinutes(totalMinutes)})`;
+  document.getElementById('costHours').textContent = formatHoursFromMinutes(totalMinutes);
+  document.getElementById('costValue').textContent = formatCurrency(costValue);
+  document.getElementById('costFormula').textContent = `Cost = ${formatHoursFromMinutes(totalMinutes)} x Rs500 = ${formatCurrency(costValue)}`;
+}
 
 function render(){
   const tbody = document.getElementById('rowsBody');
@@ -93,6 +335,8 @@ function render(){
       <td class="num">${totalAll.toFixed(2)}</td>
     </tr>
   `;
+
+  renderJobDetails();
 }
 
 function setVal(i, key, val){
@@ -109,6 +353,11 @@ function delRow(i){
   if(rows.length===1){ rows[0]={length:'',width:''}; render(); return; }
   rows.splice(i,1);
   render();
+}
+
+function setJobVal(key, val){
+  job[key] = val;
+  renderJobDetails();
 }
 
 render();
